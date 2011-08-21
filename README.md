@@ -8,9 +8,10 @@ The algorithm implemented here is ideal for 32-bit architectures.
 Jenkins hash is a general purpose hash algorithm created by Bob Jenkins. It takes an input of variable length and processes chunks of 12-bytes each and outputs a hash value as int (32 bits) or long (64 bits).
 
 Advantages over other hash algorithms:
-* Uniform distribution of hashes
-* Very good <a href="http://en.wikipedia.org/wiki/Strict_Avalanche_Criterion">avalanche effect</a>
-*  Faster than most hash algorithms in terms of number of instructions used in hash calculation. 
+
+1. Uniform distribution of hashes
+2. Very good <a href="http://en.wikipedia.org/wiki/Strict_Avalanche_Criterion">avalanche effect</a>
+3.  Faster than most hash algorithms in terms of number of instructions used in hash calculation. 
 
 # Usage
     String message = "";
