@@ -5,13 +5,13 @@
 /**
  * This is an implementation of Bob Jenkins' hash. It can produce both 32-bit
  * and 64-bit hash values.
- * <p>
+ * <p/>
  * Generates same hash values as the <a
  * href="http://www.burtleburtle.net/bob/hash/doobs.html">original
  * implementation written by Bob Jenkins</a>.
- * 
- * @version $Revision: $
+ *
  * @author $Author: vijaykandy $
+ * @version $Revision: $
  */
 public class JenkinsHash {
 
@@ -23,7 +23,7 @@ public class JenkinsHash {
 
     /**
      * Returns a 64-bit hash value.
-     * 
+     *
      * @return 64-bit hash value
      */
     public long hash64(byte[] input) {
@@ -35,7 +35,7 @@ public class JenkinsHash {
 
     /**
      * Returns a 32-bit hash value.
-     * 
+     *
      * @return 32-bit hash value
      */
     public int hash32(byte[] input) {
@@ -46,18 +46,41 @@ public class JenkinsHash {
     }
 
     /**
+     * Calculate a 32-bit hash value, using the method signature and parameters matching those of the original Lookup3.c#hashLittle method.
+     *
+     * @param input  The data.
+     * @param length The number of elements (starting from index 0) from the input array to calculate the hash on.
+     * @param pc     The offset for the hash for incremental hashes or {@code 0} for a new hash.
+     *
+     * @return 32-bit hash value.
+     */
+    public int hashLittle(byte[] input, int length, int pc) {
+        return (int) hash(input, length, pc, 0, true);
+    }
+
+    /**
+     * Calculate a 64-bit hash value, using the method signature and parameters matching those of the original Lookup3.c#hashLittle2 method.
+     *
+     * @param input  The data.
+     * @param length The number of elements (starting from index 0) from the input array to calculate the hash on.
+     * @param pc     The offset for the hash for incremental hashes or {@code 0} for a new hash.
+     * @param pb     The offset for the hash for incremental hashes or {@code 0} for a new hash.
+     *
+     * @return 64-bit hash value.
+     */
+    public long hashLittle2(byte[] input, int length, int pc, int pb) {
+        return hash(input, length, pc, pb, false);
+    }
+
+    /**
      * Hash algorithm.
-     * 
-     * @param k
-     *            message on which hash is computed
-     * @param length
-     *            message size
-     * @param pc
-     *            primary init value
-     * @param pb
-     *            secondary init value
-     * @param is32BitHash
-     *            true if just 32-bit hash is expected.
+     *
+     * @param k           message on which hash is computed
+     * @param length      message size
+     * @param pc          primary init value
+     * @param pb          secondary init value
+     * @param is32BitHash true if just 32-bit hash is expected.
+     *
      * @return
      */
     private long hash(byte[] k, int length, int pc, int pb, boolean is32BitHash) {
@@ -106,33 +129,33 @@ public class JenkinsHash {
         }
 
         switch (length) {
-        case 12:
-            c += k[offset + 11] << 24;
-        case 11:
-            c += k[offset + 10] << 16;
-        case 10:
-            c += k[offset + 9] << 8;
-        case 9:
-            c += k[offset + 8];
-        case 8:
-            b += k[offset + 7] << 24;
-        case 7:
-            b += k[offset + 6] << 16;
-        case 6:
-            b += k[offset + 5] << 8;
-        case 5:
-            b += k[offset + 4];
-        case 4:
-            a += k[offset + 3] << 24;
-        case 3:
-            a += k[offset + 2] << 16;
-        case 2:
-            a += k[offset + 1] << 8;
-        case 1:
-            a += k[offset + 0];
-            break;
-        case 0:
-            return is32BitHash ? c : (c | ((long) (b << 32)));
+            case 12:
+                c += k[offset + 11] << 24;
+            case 11:
+                c += k[offset + 10] << 16;
+            case 10:
+                c += k[offset + 9] << 8;
+            case 9:
+                c += k[offset + 8];
+            case 8:
+                b += k[offset + 7] << 24;
+            case 7:
+                b += k[offset + 6] << 16;
+            case 6:
+                b += k[offset + 5] << 8;
+            case 5:
+                b += k[offset + 4];
+            case 4:
+                a += k[offset + 3] << 24;
+            case 3:
+                a += k[offset + 2] << 16;
+            case 2:
+                a += k[offset + 1] << 8;
+            case 1:
+                a += k[offset + 0];
+                break;
+            case 0:
+                return is32BitHash ? c : ((((long) c) << 32)) | ((long) b &0xFFFFFFFFL);
         }
 
         // Final mixing of thrree 32-bit values in to c
@@ -151,11 +174,11 @@ public class JenkinsHash {
         c ^= b;
         c -= rot(b, 24);
 
-        return is32BitHash ? c : (c | ((long) (b << 32)));
+        return is32BitHash ? c : ((((long) c) << 32)) | ((long) b &0xFFFFFFFFL);
     }
 
     long rot(int x, int distance) {
-        return (x << distance) | (x >> (32 - distance));
+        return (x << distance) | (x >>> (32 - distance));
         // return (x << distance) | (x >>> -distance);
     }
 }
